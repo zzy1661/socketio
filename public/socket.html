@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+		<!--<script src="/socket.io/socket.io.js"></script>-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<h1>socket</h1>
+		<form>
+			<input type="text" id="m" />
+			<input type="submit" value="submit" />
+			<ul id="message"></ul>
+		</form>
+		<script type="text/javascript">
+			$(function() {
+				var socket = io('http://localhost:8080');
+				$('form').submit(function() {
+					socket.emit('chat message', $('#m').val());
+					$('#m').val('');
+					return false;
+				});
+				socket.on('chat message', function(msg) {
+					$('#message').append($('<li>').text(msg));
+				});
+				socket.on('some event',function(msg) {
+					console.log('every',msg);
+				})
+				socket.on('hi',function(msg) {
+					console.log('hi',msg);
+				})
+				socket.on('disconnect', (reason) => {
+					console.log('reason',reason);
+					socket.disconnect()
+				  /*if (reason === 'io server disconnect') {
+				    // the disconnection was initiated by the server, you need to reconnect manually
+				    socket.connect();
+				  }
+				  // else the socket will automatically try to reconnect*/
+				});
+			});
+		</script>
+	</body>
+
+</html>
