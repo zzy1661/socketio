@@ -44,7 +44,7 @@ app.use(function(err, req, res, next) {
 var socketApp = express();
 var socketServer = require('http').Server(socketApp);
 var io = require('socket.io')(socketServer);
-io.on('connection', function(socket) {
+/* io.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		console.log('user disconnected');
 	});
@@ -55,7 +55,20 @@ io.on('connection', function(socket) {
 	io.emit('some event', { for: 'everyone' });
 	socket.broadcast.emit('hi','broadcast');
 
-});
+}); */
+//namespace 
+var chanel1 = io.of(1);
+chanel1.on('connection',function(socket){
+	socket.on('disconnect', function() {
+		console.log('user disconnected');
+	});
+	socket.on('chat message', function(msg) {
+		console.log('message: ' + msg);
+		io.emit('chat message', msg);
+	});
+	chanel1.emit('some event', { for: 'everyone' });
+	socket.broadcast.emit('hi','broadcast');
+})
 
 socketServer.listen(8080, function() {
 	console.log('socket listening on *:8080');
